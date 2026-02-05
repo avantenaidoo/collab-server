@@ -49,7 +49,11 @@ const rooms = new Map<string, Set<string>>();
    ======================== */
 
 io.on("connection", (socket: CollabSocket) => {
+  console.log("🔌 Client connected:", socket.id);
+
   socket.on("joinRoom", ({ username, roomId }: JoinRoomPayload) => {
+    console.log(`👤 ${username} joined room ${roomId}`);
+
     socket.username = username;
     socket.roomId = roomId;
 
@@ -86,8 +90,9 @@ io.on("connection", (socket: CollabSocket) => {
   });
 
   socket.on("disconnect", () => {
-    const { roomId, username } = socket;
+    console.log("❌ Client disconnected:", socket.id);
 
+    const { roomId, username } = socket;
     if (!roomId || !username) return;
 
     const room = rooms.get(roomId);
@@ -110,8 +115,9 @@ io.on("connection", (socket: CollabSocket) => {
    Start server
    ======================== */
 
-const PORT = process.env.PORT ?? 3000;
+const PORT = Number(process.env.PORT ?? 3001);
+const HOST = "localhost";
 
 httpServer.listen(PORT, () => {
-  console.log(`✅ Collab server running on :${PORT}`);
+  console.log(`✅ Collab server running at http://${HOST}:${PORT}`);
 });
